@@ -13,14 +13,13 @@ import (
 	"path"
 )
 
-
 var userHome string
 var googleDriveConfigHome string
 
 const GOOGLE_DRIVE_CONFIG_HOME string = ".google_drive"
 const FOLDER_ID string = "1YiH4GVqveyq_xdKBwdbfK7ylaXjXStnN"
 
-func getDriverClient() *http.Client{
+func getDriverClient() *http.Client {
 	secrets, err := ioutil.ReadFile(path.Join(googleDriveConfigHome, "secrets.json"))
 
 	if err != nil {
@@ -28,18 +27,18 @@ func getDriverClient() *http.Client{
 	}
 
 	var user clientUser
-	json.Unmarshal(secrets,&user)
+	json.Unmarshal(secrets, &user)
 
 	config := &jwt.Config{
-		Email:         user.Email,
-		PrivateKey:    []byte(user.PrivateKey),
-		Scopes:        []string {
+		Email:      user.Email,
+		PrivateKey: []byte(user.PrivateKey),
+		Scopes: []string{
 			drive.DriveScope,
 		},
 		TokenURL: google.JWTTokenURL,
 	}
 
-	 httpClient := config.Client(context.Background())
+	httpClient := config.Client(context.Background())
 
 	return httpClient
 
@@ -72,23 +71,9 @@ func init() {
 	}
 }
 
-func uploadFile(service *drive.Service, fileToUpload  *os.File) {
-	file := &drive.File{
-		MimeType: "application/vnd.ms-excel",
-		Name: fileToUpload.Name(),
-		Parents: []string{FOLDER_ID},
-	}
-
-	_,err := service.Files.Create(file).Media(fileToUpload).Do()
-
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-}
-
 func main() {
 	driverClient := getDriverClient()
-	fileToUpload, err := os.Open(path.Join("/home/gaspar","Dropbox","Documentos","Gastos.xlsx"))
+	fileToUpload, err := os.Open(path.Join("/home/gaspar", "Dropbox", "Documentos", "Gastos.xlsx"))
 
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -102,9 +87,7 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	uploadFile(service,fileToUpload)
-
-
+	uploadFile(service, fileToUpload)
 
 }
 
