@@ -25,12 +25,10 @@ func uploadFile(service *drive.Service, fileToUpload *os.File) {
 	}
 
 	//_, err = service.Files.Create(file).Media(fileToUpload).Do()
-	fields := []googleapi.Field{"nextPageToken,files(id,fileExtension, name)"}
 
-	list,err := service.Files.List().Spaces("drive").Q("'" + FOLDER_ID + "' in parents").Fields(fields...).Do()
-	prueba := list.Files
+	folderContent, err := getFolderContents(service)
 
-	fmt.Println(prueba[0].Name)
+	fmt.Println(folderContent[0].Name)
 	fmt.Println(file.Name)
 
 	if err != nil {
@@ -38,10 +36,21 @@ func uploadFile(service *drive.Service, fileToUpload *os.File) {
 	}
 }
 
+func getFolderContents(service *drive.Service) ([]*drive.File, error) {
+	fields := []googleapi.Field{"nextPageToken,files(id,fileExtension, name)"}
+	query := "'" + FOLDER_ID + "' in parents"
+
+	driverFileList, err := service.Files.List().Spaces("drive").Q(query).Fields(fields...).Do()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return driverFileList.Files, nil
+}
+
 func getMimeTypeFile(fileToDetect *os.File) (string, error) {
-
 	buffer := make([]byte, 512)
-
 	_, err := fileToDetect.Read(buffer)
 
 	if err != nil {

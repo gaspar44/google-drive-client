@@ -90,7 +90,3 @@ func main() {
 	uploadFile(service, fileToUpload)
 
 }
-
-func createFile(service *drive.Service) {
-
-}
