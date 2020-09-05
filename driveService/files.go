@@ -81,13 +81,8 @@ func parseName(absolutePathOfFile string) string {
 	lastIndex := strings.LastIndex(absolutePathOfFile, "/")
 
 	if lastIndex == -1 {
-		return ""
+		return absolutePathOfFile
 	}
-	/*	beforeFileName := lastIndex + len(absolutePathOfFile)
-
-		if beforeFileName >= len(absolutePathOfFile) {
-			return ""
-		}*/
 
 	return absolutePathOfFile[lastIndex+1 : len(absolutePathOfFile)]
 }
