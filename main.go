@@ -14,5 +14,6 @@ func main() {
 		log.Fatalln()
 	}
 
-	driveService.UploadFile(fileToUpload)
+	service := driveService.New()
+	service.UploadFile(fileToUpload)
 }

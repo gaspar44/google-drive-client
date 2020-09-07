@@ -6,13 +6,12 @@ import (
 	"google.golang.org/api/googleapi"
 	"strings"
 
-	/*"googleDriveClient"*/
 	"log"
 	"net/http"
 	"os"
 )
 
-func UploadFile(fileToUpload *os.File) error {
+func (srv *DriveService) UploadFile(fileToUpload *os.File) error {
 	contentType, err := getMimeTypeFile(fileToUpload)
 
 	if err != nil {
@@ -23,19 +22,15 @@ func UploadFile(fileToUpload *os.File) error {
 
 	fileWithoutAbsolutePath := parseName(fileToUpload.Name())
 
-	if fileWithoutAbsolutePath == "" {
-		return &errorParsingFileName{Message: "Can not parse name"}
-	}
-
 	file := &drive.File{
 		MimeType: contentType,
 		Name:     fileWithoutAbsolutePath,
 		Parents:  []string{FOLDER_ID},
 	}
 
-	_, err = service.Files.Create(file).Media(fileToUpload).Do()
+	//_, err = srv.serviceInstance.Files.Create(file).Media(fileToUpload).Do()
 
-	folderContent, err := getFolderContents()
+	folderContent, err := getFolderContents(srv)
 	fmt.Println(file.Name)
 	fmt.Println(folderContent[0].Name)
 
@@ -46,12 +41,12 @@ func UploadFile(fileToUpload *os.File) error {
 	return nil
 }
 
-func getFolderContents() ([]*drive.File, error) {
+func getFolderContents(srv *DriveService) ([]*drive.File, error) {
 	fields := []googleapi.Field{"nextPageToken,files(id,fileExtension, name)"}
 	query := "'" + FOLDER_ID + "' in parents"
 
-	driverFileList, err := service.Files.List().Spaces("drive").Q(query).Fields(fields...).Do()
-	service.Files.Get(FOLDER_ID).Download()
+	driverFileList, err := srv.serviceInstance.Files.List().Spaces("drive").Q(query).Fields(fields...).Do()
+	//response, err := srv.serviceInstance.Files.Get(FOLDER_ID).Download()
 
 	if err != nil {
 		return nil, err
@@ -68,12 +63,11 @@ func getMimeTypeFile(fileToDetect *os.File) (string, error) {
 		return "", err
 	}
 
-	contenType := http.DetectContentType(buffer)
+	return http.DetectContentType(buffer), nil
 
-	return contenType, nil
 }
 
-func checkIfFileExistsOrIsNew(fileToCheck *os.File) bool {
+func (srv *DriveService) checkIfFileExistsOrIsNew(fileToCheck *os.File) bool {
 	return true
 }
 

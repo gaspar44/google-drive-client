@@ -22,7 +22,6 @@ var service *drive.Service
 
 func init() {
 	var exists bool
-	var err error
 	userHome := os.Getenv("HOME")
 	googleDriveConfigHome, exists = os.LookupEnv("GOOGLE_DRIVE_CONFIG_HOME")
 
@@ -31,12 +30,18 @@ func init() {
 		checkAndSetGoogleDriveHome(googleDriveConfigHome)
 	}
 
-	httpClient := getDriverClient()
+}
 
-	service, err = drive.New(httpClient)
+func New() *DriveService {
+	httpClient := getDriverClient()
+	newService, err := drive.New(httpClient)
 
 	if err != nil {
 		log.Fatalln(err.Error())
+	}
+
+	return &DriveService{
+		serviceInstance: newService,
 	}
 }
 
