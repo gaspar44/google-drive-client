@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"log"
-	"net/http"
 	"os"
 )
 
@@ -23,16 +22,30 @@ func (srv *DriveService) UploadFile(fileToUpload *os.File) error {
 	fileWithoutAbsolutePath := parseName(fileToUpload.Name())
 
 	file := &drive.File{
-		MimeType: contentType,
+		//MimeType: contentType,
 		Name:     fileWithoutAbsolutePath,
 		Parents:  []string{FOLDER_ID},
+
 	}
 
-	//_, err = srv.serviceInstance.Files.Create(file).Media(fileToUpload).Do()
+
+	fileUploaded, err := srv.serviceInstance.Files.Create(file).Media(fileToUpload).Do()
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
+	//_, err = srv.serviceInstance.Files.Update(fileUploaded.Id).Do()
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	//srv.serviceInstance.Files.Update("1g6VF-VSi8eT8mpcuC4hZ2nwKoH3NZLyB",file).Media(fileToUpload).Do()
 
 	folderContent, err := getFolderContents(srv)
+	fmt.Println(fileUploaded.MimeType)
 	fmt.Println(file.Name)
-	fmt.Println(folderContent[0].Name)
+	fmt.Println(folderContent[0].MimeType)
 
 	if err != nil {
 		return err
@@ -63,7 +76,10 @@ func getMimeTypeFile(fileToDetect *os.File) (string, error) {
 		return "", err
 	}
 
-	return http.DetectContentType(buffer), nil
+	//return mimetype.Detect(buffer).String(), nil
+	return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", nil
+	//return http.DetectContentType(buffer), nil
+	//return http.DetectContentType(buffer), nil
 
 }
 
