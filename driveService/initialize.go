@@ -16,7 +16,6 @@ const FOLDER_ID string = "1YiH4GVqveyq_xdKBwdbfK7ylaXjXStnN"
 
 var userHome string
 var googleDriveConfigHome string
-var service *drive.Service
 
 func init() {
 	var exists bool
@@ -48,7 +47,7 @@ func getDriverClient() *http.Client {
 		log.Fatalln(err.Error())
 	}
 
-	config, err := google.JWTConfigFromJSON(secrets,drive.DriveScope)
+	config, err := google.JWTConfigFromJSON(secrets, drive.DriveScope, drive.DriveReadonlyScope)
 
 	if err != nil {
 		log.Fatalln(err.Error())

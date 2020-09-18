@@ -9,9 +9,8 @@ import (
 	"os"
 )
 
-func (srv *DriveService) UploadFile(fileToUpload *os.File) error {
+func UploadService(service *drive.Service, fileToUpload *os.File) (*drive.File, error) {
 	contentType, err := getMimeTypeFile(fileToUpload)
-
 	if err != nil {
 		log.Fatalln(err.Error())
 	} else if contentType == "" {
@@ -24,32 +23,22 @@ func (srv *DriveService) UploadFile(fileToUpload *os.File) error {
 		MimeType: "text/plain",
 		Name:     fileWithoutAbsolutePath,
 		Parents:  []string{FOLDER_ID},
-
 	}
 
-	/*fileUploaded, err := */srv.serviceInstance.Files.Create(file).Media(fileToUpload).Do()
-
-/*	if err != nil {
-		log.Fatalln(err.Error())
-	}
-
-	folderContent, err := getFolderContents(srv)
-	fmt.Println(fileUploaded.MimeType)
-	fmt.Println(file.Name)
-	fmt.Println(folderContent[0].MimeType)
+	uploadedFile, err := service.Files.Create(file).Media(fileToUpload).Do()
 
 	if err != nil {
-		return err
-	}*/
+		return nil, err
+	}
 
-	return nil
+	return uploadedFile, err
 }
 
-func getFolderContents(srv *DriveService) ([]*drive.File, error) {
+func getFolderContents(srv *drive.Service) ([]*drive.File, error) {
 	fields := []googleapi.Field{"nextPageToken,files(id,fileExtension, name)"}
 	query := "'" + FOLDER_ID + "' in parents"
 
-	driverFileList, err := srv.serviceInstance.Files.List().Spaces("drive").Q(query).Fields(fields...).Do()
+	driverFileList, err := srv.Files.List().Spaces("drive").Q(query).Fields(fields...).Do()
 	//response, err := srv.serviceInstance.Files.Get(FOLDER_ID).Download()
 
 	if err != nil {
@@ -74,10 +63,10 @@ func getMimeTypeFile(fileToDetect *os.File) (string, error) {
 
 }
 
-func (srv *DriveService) checkIfFileExistsOrIsNew(fileToCheck *os.File) bool {
+/*func (srv *DriveService) checkIfFileExistsOrIsNew(fileToCheck *os.File) bool {
 	return true
 }
-
+*/
 func parseName(absolutePathOfFile string) string {
 	lastIndex := strings.LastIndex(absolutePathOfFile, "/")
 
