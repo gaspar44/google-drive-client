@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	fileToUpload, err := os.Open(path.Join("/home/gaspar", "Dropbox", "Documentos", "Gastos.xlsx"))
+	fileToUpload, err := os.Open(path.Join("/home/gaspar", "Dropbox", "Documentos", "hola.txt"))
 
 	if err != nil {
 		log.Fatalln()
@@ -22,6 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
+
 	service.Upload(preparedFile)
 	//driveService.UploadFile(fileToUpload)
 	//driveService.UploadService2(service,fileToUpload)

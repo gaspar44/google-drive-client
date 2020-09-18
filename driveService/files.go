@@ -5,7 +5,6 @@ import (
 	"google.golang.org/api/googleapi"
 )
 
-
 func (srv *DriveService) Upload(fileToUpload *PreparatedFileToUpload) (*drive.File, error) {
 	file := &drive.File{
 		MimeType: fileToUpload.MimeType,
@@ -35,7 +34,6 @@ func (srv *DriveService) getFolderContents() ([]*drive.File, error) {
 
 	return driverFileList.Files, nil
 }
-
 
 /*func (srv *DriveService) checkIfFileExistsOrIsNew(fileToCheck *os.File) bool {
 	return true
