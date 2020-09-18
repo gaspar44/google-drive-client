@@ -28,8 +28,11 @@ func init() {
 	}
 
 }
+type DriveService struct {
+	ServiceInstance *drive.Service
+}
 
-func New() *drive.Service {
+func New() *DriveService {
 	httpClient := getDriverClient()
 	newService, err := drive.New(httpClient)
 
@@ -37,7 +40,9 @@ func New() *drive.Service {
 		log.Fatalln(err.Error())
 	}
 
-	return newService
+	return &DriveService{
+		ServiceInstance: newService,
+	}
 }
 
 func getDriverClient() *http.Client {

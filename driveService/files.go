@@ -8,7 +8,8 @@ import (
 	"os"
 )
 
-func UploadService(service *drive.Service, fileToUpload *os.File) (*drive.File, error) {
+
+func (srv *DriveService) UploadService(fileToUpload *os.File) (*drive.File, error) {
 	fileWithoutAbsolutePath := parseName(fileToUpload.Name())
 
 	file := &drive.File{
@@ -17,7 +18,7 @@ func UploadService(service *drive.Service, fileToUpload *os.File) (*drive.File, 
 		Parents:  []string{FOLDER_ID},
 	}
 
-	uploadedFile, err := service.Files.Create(file).Media(fileToUpload).Do()
+	uploadedFile, err := srv.ServiceInstance.Files.Create(file).Media(fileToUpload).Do()
 
 	if err != nil {
 		return nil, err

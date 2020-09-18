@@ -17,7 +17,7 @@ func main() {
 	defer fileToUpload.Close()
 
 	service := driveService.New()
-	driveService.UploadService(service, fileToUpload)
+	service.UploadService(fileToUpload)
 	//driveService.UploadFile(fileToUpload)
 	//driveService.UploadService2(service,fileToUpload)
 }
