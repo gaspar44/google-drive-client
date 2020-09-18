@@ -1,7 +1,6 @@
 package driveService
 
 import (
-	"fmt"
 	"google.golang.org/api/drive/v3"
 	"google.golang.org/api/googleapi"
 	"strings"
@@ -22,25 +21,17 @@ func (srv *DriveService) UploadFile(fileToUpload *os.File) error {
 	fileWithoutAbsolutePath := parseName(fileToUpload.Name())
 
 	file := &drive.File{
-		//MimeType: contentType,
+		MimeType: "text/plain",
 		Name:     fileWithoutAbsolutePath,
 		Parents:  []string{FOLDER_ID},
 
 	}
 
+	/*fileUploaded, err := */srv.serviceInstance.Files.Create(file).Media(fileToUpload).Do()
 
-	fileUploaded, err := srv.serviceInstance.Files.Create(file).Media(fileToUpload).Do()
-
-	if err != nil {
+/*	if err != nil {
 		log.Fatalln(err.Error())
 	}
-
-	//_, err = srv.serviceInstance.Files.Update(fileUploaded.Id).Do()
-
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-	//srv.serviceInstance.Files.Update("1g6VF-VSi8eT8mpcuC4hZ2nwKoH3NZLyB",file).Media(fileToUpload).Do()
 
 	folderContent, err := getFolderContents(srv)
 	fmt.Println(fileUploaded.MimeType)
@@ -49,7 +40,7 @@ func (srv *DriveService) UploadFile(fileToUpload *os.File) error {
 
 	if err != nil {
 		return err
-	}
+	}*/
 
 	return nil
 }

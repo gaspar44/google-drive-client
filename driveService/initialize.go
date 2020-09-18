@@ -2,9 +2,7 @@ package driveService
 
 import (
 	"context"
-	"encoding/json"
 	"golang.org/x/oauth2/google"
-	"golang.org/x/oauth2/jwt"
 	"google.golang.org/api/drive/v3"
 	"io/ioutil"
 	"log"
@@ -32,7 +30,7 @@ func init() {
 
 }
 
-func New() *DriveService {
+func New() *drive.Service {
 	httpClient := getDriverClient()
 	newService, err := drive.New(httpClient)
 
@@ -40,9 +38,7 @@ func New() *DriveService {
 		log.Fatalln(err.Error())
 	}
 
-	return &DriveService{
-		serviceInstance: newService,
-	}
+	return newService
 }
 
 func getDriverClient() *http.Client {
@@ -52,16 +48,10 @@ func getDriverClient() *http.Client {
 		log.Fatalln(err.Error())
 	}
 
-	var user clientUser
-	json.Unmarshal(secrets, &user)
+	config, err := google.JWTConfigFromJSON(secrets,drive.DriveScope)
 
-	config := &jwt.Config{
-		Email:      user.Email,
-		PrivateKey: []byte(user.PrivateKey),
-		Scopes: []string{
-			drive.DriveScope,
-		},
-		TokenURL: google.JWTTokenURL,
+	if err != nil {
+		log.Fatalln(err.Error())
 	}
 
 	return config.Client(context.Background())

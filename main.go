@@ -1,6 +1,7 @@
 package main
 
 import (
+	"google.golang.org/api/drive/v3"
 	"googleDriveClient/driveService"
 	"log"
 	"os"
@@ -14,6 +15,15 @@ func main() {
 		log.Fatalln()
 	}
 
+	defer fileToUpload.Close()
+
 	service := driveService.New()
-	service.UploadFile(fileToUpload)
+	file := &drive.File{
+		MimeType: "text/plain",
+		Name:     fileToUpload.Name(),
+		Parents:  []string{driveService.FOLDER_ID},
+
+	}
+	service.Files.Create(file).Media(fileToUpload).Do()
+	//service.UploadFile(fileToUpload)
 }
