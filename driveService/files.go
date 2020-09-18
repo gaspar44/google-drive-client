@@ -5,22 +5,14 @@ import (
 	"google.golang.org/api/googleapi"
 	"strings"
 
-	"log"
 	"os"
 )
 
 func UploadService(service *drive.Service, fileToUpload *os.File) (*drive.File, error) {
-	contentType, err := getMimeTypeFile(fileToUpload)
-	if err != nil {
-		log.Fatalln(err.Error())
-	} else if contentType == "" {
-		log.Fatalln("unable to determinate mime type")
-	}
-
 	fileWithoutAbsolutePath := parseName(fileToUpload.Name())
 
 	file := &drive.File{
-		MimeType: "text/plain",
+		//MimeType: "text/plain",
 		Name:     fileWithoutAbsolutePath,
 		Parents:  []string{FOLDER_ID},
 	}
