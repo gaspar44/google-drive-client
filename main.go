@@ -23,7 +23,6 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
+	service.WatchRemoteFolderContents()
 	service.Upload(preparedFile)
-	//driveService.UploadFile(fileToUpload)
-	//driveService.UploadService2(service,fileToUpload)
 }

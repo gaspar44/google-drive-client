@@ -2,21 +2,25 @@ package driveService
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"github.com/gabriel-vasile/mimetype"
 	"io/ioutil"
 	"os"
 	"strings"
 )
 
-type PreparatedFileToUpload struct {
-	file     *bytes.Reader
-	MimeType string
-	Name     string
+type PreparedFileToUpload struct {
+	file        *bytes.Reader
+	MimeType    string
+	Name        string
+	Md5CheckSum string
 }
 
-func PrepareFile(fileToUpload *os.File) (*PreparatedFileToUpload, error) {
+func PrepareFile(fileToUpload *os.File) (*PreparedFileToUpload, error) {
 	fileWithoutAbsolutePath := parseName(fileToUpload.Name())
 	data, err := ioutil.ReadAll(fileToUpload)
+	checkSum := calculateCheckSum(data)
 
 	if err != nil {
 		return nil, err
@@ -25,11 +29,17 @@ func PrepareFile(fileToUpload *os.File) (*PreparatedFileToUpload, error) {
 	mimeType := mimetype.Detect(data)
 	fileToUse := bytes.NewReader(data)
 
-	return &PreparatedFileToUpload{
-		file:     fileToUse,
-		MimeType: mimeType.String(),
-		Name:     fileWithoutAbsolutePath,
+	return &PreparedFileToUpload{
+		file:        fileToUse,
+		MimeType:    mimeType.String(),
+		Name:        fileWithoutAbsolutePath,
+		Md5CheckSum: checkSum,
 	}, nil
+}
+
+func calculateCheckSum(data []byte) string {
+	hash := md5.Sum(data)
+	return hex.EncodeToString(hash[:])
 }
 
 func parseName(absolutePathOfFile string) string {
